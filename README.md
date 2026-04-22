@@ -1,1 +1,1 @@
-My submissions for the Full Stack Open assignments
+My submissions for Full Stack Open assignments
