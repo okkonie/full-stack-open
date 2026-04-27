@@ -1,3 +1,9 @@
-export default function Persons({persons}){
-  return persons.map((person, i) => <p key={i}>{person.name} {person.number}</p>)
+export default function Persons({persons, deletePerson}){
+
+  return persons.map((person, i) => 
+    <div key={person.id}>
+      <p>{person.name} {person.number}</p>
+      <button onClick={() => deletePerson(person)}>delete</button>
+    </div>
+  )
 }
