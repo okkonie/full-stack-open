@@ -15,13 +15,21 @@ const App = () => {
 
   useEffect(() => {
     services.getAll().then((response) => setPersons(response))
+
   }, [])
 
   const handleChange = (setter) => (event) => {
     setter(event.target.value)
   }
 
+  const handleMessage = (message, error = false) => {
+
+    setMessage({text: message, error: error})
+    setTimeout(() => {setMessage({text: null, error: false})}, 5000)
+  } 
+
   const addPerson = (event) => {
+
     event.preventDefault()
 
     const found = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
@@ -29,25 +37,27 @@ const App = () => {
     if(!found){
       services.create({name: newName, number: newNumber})
         .then((response) => {
-          setPersons(persons.concat(response))
 
-          setMessage({text: `Added ${newName}`, error: false})
-          setTimeout(() => {setMessage({text: null, error: false})}, 5000)
+          setPersons(persons.concat(response))
+          handleMessage(`Added ${newName}`)
+
+        }).catch(error => {
+            handleMessage(error.response.data.error, true)
         })
     }
 
     if(found && confirm(`${newName} is already added to phonebook, replace old number with new one?`)){
+
       const updatedPerson = { ...found, number: newNumber }
+
       services.update(found.id, updatedPerson)
         .then((response) => {
-          setPersons(persons.map((person) => person.id !== found.id ? person : response))
-          
-          setMessage({text: `Changed number of ${found.name}`, ...message})
-          setTimeout(() => {setMessage({text: null, error: false})}, 5000)
-        }).catch(error => {
 
-          setMessage({text: `Information of ${updatedPerson.name} has already been removed from server`, error: true})
-          setTimeout(() => {setMessage({text: null, error: false})}, 5000)
+          setPersons(persons.map((person) => person.id !== found.id ? person : response))
+          handleMessage(`Changed number of ${found.name}`)
+          
+        }).catch(error => {
+          handleMessage(`Information of ${updatedPerson.name} has already been removed from server`, true)
         })
     }
 
@@ -57,11 +67,12 @@ const App = () => {
 
   const deletePerson = (person) => {
     if(confirm(`Delete ${person.name}?`)){
-      services.deleteObj(person.id).then(() => {
-        setPersons(persons.filter((p) => p.id !== person.id))
 
-        setMessage({text: `Deleted ${person.name}`, error: false})
-        setTimeout(() => {setMessage({text: null, error: false})}, 5000)
+      services.deleteObj(person.id).then(() => {
+
+        setPersons(persons.filter((p) => p.id !== person.id))
+        handleMessage(`Deleted ${person.name}`)
+
       })
     }
   }

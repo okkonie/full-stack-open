@@ -3,7 +3,6 @@ const url = '/api/persons'
 
 const getAll = () => {
   const request = axios.get(url)
-  console.log(url)
   return request.then(response => response.data)
 }
 

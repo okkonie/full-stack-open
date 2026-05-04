@@ -1,6 +1,6 @@
-API live on: https://full-stack-open-lykx.onrender.com
+app live on: https://full-stack-open-lykx.onrender.com
 
-With endpoints:
+API endpoints:
 /info
 /api/persons
 /api/persons/{id}
