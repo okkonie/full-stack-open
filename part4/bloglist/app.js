@@ -1,6 +1,6 @@
 const express = require('express')
 const config = require('./utils/config')
-const logger = require('./controllers/logger')
+const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
