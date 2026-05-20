@@ -1,4 +1,4 @@
-const Notification =({message}) => (
+const Notification =({ message }) => (
   message ? <p className="message">{message}</p> : null
 )
 

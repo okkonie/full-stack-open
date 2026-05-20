@@ -1,8 +1,8 @@
-import { useState } from "react"
-import Notification from "./Notification"
+import { useState } from 'react'
+import Notification from './Notification'
 
-export default function Login({handleLogin, message}){
-  const [username, setUsername] = useState('') 
+export default function Login({ handleLogin, message }){
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmit = event => {
@@ -29,7 +29,7 @@ export default function Login({handleLogin, message}){
         </div>
         <div>
           <label>
-            password 
+            password
             <input
               type="password"
               value={password}

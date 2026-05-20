@@ -1,13 +1,13 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-export default function NewBlog({createBlog}){
+export default function NewBlog({ createBlog }){
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  
+
   const handleSubmit = event => {
     event.preventDefault()
-    createBlog({title, author, url})
+    createBlog({ title, author, url })
 
     setTitle('')
     setAuthor('')
@@ -20,8 +20,8 @@ export default function NewBlog({createBlog}){
       <div>
         <label>
           title:
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
@@ -30,8 +30,8 @@ export default function NewBlog({createBlog}){
       <div>
         <label>
           author:
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
@@ -40,8 +40,8 @@ export default function NewBlog({createBlog}){
       <div>
         <label>
           url:
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={url}
             onChange={({ target }) => setUrl(target.value)}
           />

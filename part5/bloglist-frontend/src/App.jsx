@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const App = () => {
       setUser(null)
       window.localStorage.removeItem('user')
 
-      handleMessage(`logged out`)
+      handleMessage('logged out')
     } catch {
       handleMessage('failed to logout')
     }
@@ -68,13 +68,13 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
 
       const created = await blogService.create(blog)
-      setBlogs(blogs.concat(created)) 
+      setBlogs(blogs.concat(created))
 
       handleMessage(`a new blog ${created.title} by ${created.author} was added`)
     } catch {
       handleMessage('error creating blog')
     }
-  } 
+  }
 
   const handleLike = async (blog) => {
     try {
@@ -118,8 +118,8 @@ const App = () => {
         <NewBlog createBlog={createBlog}/>
       </Togglable>
       {sortedBlogs.map(blog =>
-        <Blog 
-          key={blog.id} 
+        <Blog
+          key={blog.id}
           blog={blog}
           loggedUsername={user.username}
           handleLike={handleLike}
@@ -127,7 +127,7 @@ const App = () => {
         />
       )}
     </div>
-    
+
   )
 }
 
