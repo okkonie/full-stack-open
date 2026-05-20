@@ -1,4 +1,5 @@
-export default function Notification({message}){
-  if(!message) return null
-  return <p className="message">{message}</p>
-}
+const Notification =({message}) => (
+  message ? <p className="message">{message}</p> : null
+)
+
+export default Notification
