@@ -23,6 +23,7 @@ export default function NewBlog({ createBlog }){
           <input
             type="text"
             value={title}
+            placeholder='title'
             onChange={({ target }) => setTitle(target.value)}
           />
         </label>
@@ -33,6 +34,7 @@ export default function NewBlog({ createBlog }){
           <input
             type="text"
             value={author}
+            placeholder='author'
             onChange={({ target }) => setAuthor(target.value)}
           />
         </label>
@@ -43,6 +45,7 @@ export default function NewBlog({ createBlog }){
           <input
             type="text"
             value={url}
+            placeholder='url'
             onChange={({ target }) => setUrl(target.value)}
           />
         </label>
