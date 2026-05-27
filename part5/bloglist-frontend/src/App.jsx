@@ -1,4 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link, useNavigate
+} from 'react-router-dom'
+import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import NewBlog from './components/NewBlog'
 import Login from './components/Login'
@@ -7,12 +12,12 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 
-const App = () => {
+const AppContent = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState('')
 
-  const blogFormRef = useRef()
+  const navigate = useNavigate()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -46,7 +51,7 @@ const App = () => {
       )
 
       handleMessage(`logged in as ${username}`)
-
+      navigate('/')
     } catch {
       handleMessage('wrong username or password')
     }
@@ -58,6 +63,7 @@ const App = () => {
       window.localStorage.removeItem('user')
 
       handleMessage('logged out')
+      navigate('/')
     } catch {
       handleMessage('failed to logout')
     }
@@ -69,8 +75,7 @@ const App = () => {
       setBlogs(blogs.concat(created))
 
       handleMessage(`a new blog ${created.title} by ${created.author} was added`)
-
-      await blogFormRef.current.toggleVisibility()
+      navigate('/')
     } catch {
       handleMessage('error creating blog')
     }
@@ -95,6 +100,7 @@ const App = () => {
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(old => old.id !== blog.id))
+        navigate('/')
       } catch {
         handleMessage('error deleting blog')
       }
@@ -103,32 +109,43 @@ const App = () => {
 
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
 
-  if (user === null) {
-    return (
-      <Login handleLogin={handleLogin} message={message}/>
-    )
-  }
-
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification message={message}/>
-      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <NewBlog createBlog={createBlog}/>
-      </Togglable>
-      {sortedBlogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          loggedUsername={user.username}
-          handleLike={handleLike}
-          handleDelete={handleDelete}
-        />
-      )}
-    </div>
+    <>
+      <div>
+        <Link style={{ padding: 5 }} to="/">blogs</Link>
+
+        {user && <Link style={{ padding: 5 }} to="/create">new blog</Link>}
+
+        {user
+          ? <button onClick={handleLogout}>logout</button>
+          : <Link style={{ padding: 5 }} to="/login">login</Link>
+        }
+      </div>
+
+      <Routes>
+
+        <Route path='/' element={<Blogs blogs={sortedBlogs}/>}/>
+        <Route path='/create' element={<NewBlog createBlog={createBlog}/>}/>
+        <Route path='/login' element={<Login handleLogin={handleLogin}/>}/>
+        <Route path="/blogs/:id" element={
+          <Blog
+            blogs={blogs}
+            handleLike={handleLike}
+            handleDelete={handleDelete}
+            loggedUsername={user && user.username}
+          />
+        }/>
+
+      </Routes>
+    </>
 
   )
 }
+
+const App = () => (
+  <Router>
+    <AppContent />
+  </Router>
+)
 
 export default App

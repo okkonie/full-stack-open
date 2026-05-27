@@ -1,32 +1,19 @@
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
-export default function Blog({ blog, handleLike, handleDelete, loggedUsername }){
-  const [expanded, setExpanded] = useState(false)
+export default function Blog({ blogs, handleLike, handleDelete, loggedUsername }){
+  const id = useParams().id
+  const blog = blogs.find(n => n.id === id)
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 5,
-    border: 'solid',
-    borderWidth: 1,
-    marginTop: 5
-  }
+  if(!blog) return null
 
   return (
-    <div style={blogStyle} className="blog">
-      {blog.title} {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'view'}</button>
-
-      {expanded &&
-        <>
-          <br/>{blog.url}
-          <br/>likes {blog.likes} <button onClick={() => handleLike(blog)}>like</button>
-          <br/>{blog.user.name}
-
-          {loggedUsername === blog.user.username &&
-            <><br/><button onClick={() => handleDelete(blog)}>delete</button></>
-          }
-        </>
-      }
+    <div>
+      <h2>{blog.author}: {blog.title}</h2>
+      <a href={blog.url} target="_blank" rel="noreferrer">{blog.url}</a>
+      <p>likes {blog.likes} {loggedUsername && <button onClick={() => handleLike(blog)}>like</button>}</p>
+      <p>Added by {blog.user.name}</p>
+      {loggedUsername === blog.user.username && <button onClick={() => handleDelete(blog)}>remove</button>}
     </div>
   )
 }
