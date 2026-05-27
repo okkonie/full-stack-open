@@ -8,4 +8,10 @@ const createBlog = async (page, title, author, url) => {
   await page.getByRole('button', { name: 'create' }).click()
 }
 
-module.exports = createBlog
+const login = async (page, username, password) => {
+  await page.getByLabel('username').fill(username)
+  await page.getByLabel('password').fill(password)
+  await page.getByRole('button', { type: 'submit' }).click()
+}
+
+module.exports = { createBlog, login }

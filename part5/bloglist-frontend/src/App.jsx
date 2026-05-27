@@ -65,12 +65,12 @@ const App = () => {
 
   const createBlog = async (blog) => {
     try {
-      blogFormRef.current.toggleVisibility()
-
       const created = await blogService.create(blog)
       setBlogs(blogs.concat(created))
 
       handleMessage(`a new blog ${created.title} by ${created.author} was added`)
+
+      await blogFormRef.current.toggleVisibility()
     } catch {
       handleMessage('error creating blog')
     }

@@ -13,7 +13,7 @@ export default function Blog({ blog, handleLike, handleDelete, loggedUsername })
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {blog.title} {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'view'}</button>
 
       {expanded &&
