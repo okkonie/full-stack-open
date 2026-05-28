@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('blog', () => {
 
-  const blog = {
+  const blogs = [{
     title: 'Test blog',
     author: 'Tester',
     likes: 999,
@@ -13,37 +12,28 @@ describe('blog', () => {
       name: 'Mr. Test',
       username: 'tester'
     }
-  }
+  }]
 
-  const mockHandler = vi.fn()
+  test('blog is but buttons are not visible when not logged in', () => {
+    render(<Blog blogs={blogs} loggedUsername={null}/>)
 
-  beforeEach(() => {
-    render(<Blog blog={blog} handleLike={mockHandler}/>)
+    expect(screen.getByText('Tester: Test blog')).toBeDefined()
+    expect(screen.getByText('imaginary.url')).toBeDefined()
+    expect(screen.getByText('likes 999')).toBeDefined()
+    expect(screen.queryByRole('button', { name: 'like' })).not.toBeInTheDocument()
+    expect(screen.getByText('Added by Mr. Test')).toBeDefined()
+    expect(screen.queryByRole('button', { name: 'remove' })).not.toBeInTheDocument()
   })
 
-  test('blog title renders', () => {
-    const element = screen.getByText('Test blog', { exact: false })
-    expect(element).toBeDefined()
+  test('logged in user who didn\'t create the blog sees only like button', () => {
+    render(<Blog blogs={blogs} loggedUsername={'not-the-creator'}/>)
+
+    expect(screen.queryByRole('button', { name: 'like' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'remove' })).not.toBeInTheDocument()
   })
 
-  test('url and likes are shown when expanded', async () => {
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
-
-    expect(screen.getByText('imaginary.url', { exact: false })).toBeDefined()
-    expect(screen.getByText('likes', { exact: false })).toBeDefined()
-  })
-
-  test('like button pressed twice calls function twice', async () => {
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
-
-    const likeButton = screen.getByText('like')
-    await user.click(likeButton)
-    await user.click(likeButton)
-
-    expect(mockHandler.mock.calls).toHaveLength(2)
+  test('logged in user who created the blog sees delete button', () => {
+    render(<Blog blogs={blogs} loggedUsername={'tester'}/>)
+    expect(screen.queryByRole('button', { name: 'remove' })).toBeInTheDocument()
   })
 })

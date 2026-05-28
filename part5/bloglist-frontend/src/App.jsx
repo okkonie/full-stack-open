@@ -50,7 +50,7 @@ const AppContent = () => {
         'user', JSON.stringify(user)
       )
 
-      handleMessage(`logged in as ${username}`)
+      handleMessage(`logged in as ${user.name}`)
       navigate('/')
     } catch {
       handleMessage('wrong username or password')
@@ -121,6 +121,8 @@ const AppContent = () => {
           : <Link style={{ padding: 5 }} to="/login">login</Link>
         }
       </div>
+
+      <Notification message={message}/>
 
       <Routes>
 
