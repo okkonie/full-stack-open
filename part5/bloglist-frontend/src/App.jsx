@@ -11,11 +11,39 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import styled from 'styled-components'
+
+const Page = styled.div`
+  padding: 1em;
+  font-family: monospace;
+`
+
+const Nav = styled.div`
+  background-color: #222;
+  color: white;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const NavLink = styled(Link)`
+  padding: 1em;
+  margin: 0.5em;
+  text-decoration: none;
+  color: #eee;
+  font-weight: bold;
+  font-size: 18px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
 
 const AppContent = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState(null)
 
   const navigate = useNavigate()
 
@@ -35,9 +63,9 @@ const AppContent = () => {
     }
   }, [])
 
-  const handleMessage = (text) => {
-    setMessage(text)
-    setTimeout(() => setMessage(''), 3000)
+  const handleMessage = (text, success) => {
+    setMessage({ message: text, success: success })
+    setTimeout(() => setMessage(null), 3000)
   }
 
   const handleLogin = async (username, password) => {
@@ -50,10 +78,10 @@ const AppContent = () => {
         'user', JSON.stringify(user)
       )
 
-      handleMessage(`logged in as ${user.name}`)
+      handleMessage(`logged in as ${user.name}`, true)
       navigate('/')
     } catch {
-      handleMessage('wrong username or password')
+      handleMessage('wrong username or password', false)
     }
   }
 
@@ -62,10 +90,10 @@ const AppContent = () => {
       setUser(null)
       window.localStorage.removeItem('user')
 
-      handleMessage('logged out')
+      handleMessage('logged out', true)
       navigate('/')
     } catch {
-      handleMessage('failed to logout')
+      handleMessage('failed to logout', false)
     }
   }
 
@@ -74,10 +102,10 @@ const AppContent = () => {
       const created = await blogService.create(blog)
       setBlogs(blogs.concat(created))
 
-      handleMessage(`a new blog ${created.title} by ${created.author} was added`)
+      handleMessage(`a new blog ${created.title} by ${created.author} was added`, true)
       navigate('/')
     } catch {
-      handleMessage('error creating blog')
+      handleMessage('error creating blog', false)
     }
   }
 
@@ -91,18 +119,18 @@ const AppContent = () => {
 
       setBlogs(blogs.map(old => old.id === updated.id ? { ...updated, user: old.user } : old))
     } catch {
-      handleMessage('error updating blog')
+      handleMessage('error updating blog', false)
     }
   }
 
   const handleDelete = async (blog) => {
-    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`, true)){
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(old => old.id !== blog.id))
         navigate('/')
       } catch {
-        handleMessage('error deleting blog')
+        handleMessage('error deleting blog', false)
       }
     }
   }
@@ -110,19 +138,23 @@ const AppContent = () => {
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
 
   return (
-    <>
-      <div>
-        <Link style={{ padding: 5 }} to="/">blogs</Link>
+    <Page>
+      <Nav>
+        <h1>Blog app</h1>
 
-        {user && <Link style={{ padding: 5 }} to="/create">new blog</Link>}
+        <div>
+          <NavLink to="/">blogs</NavLink>
 
-        {user
-          ? <button onClick={handleLogout}>logout</button>
-          : <Link style={{ padding: 5 }} to="/login">login</Link>
-        }
-      </div>
+          {user && <NavLink to="/create">new blog</NavLink>}
 
-      <Notification message={message}/>
+          {user
+            ? <NavLink to="/" onClick={handleLogout}>logout</NavLink>
+            : <NavLink to="/login">login</NavLink>
+          }
+        </div>
+      </Nav>
+
+      <Notification notification={message}/>
 
       <Routes>
 
@@ -139,7 +171,7 @@ const AppContent = () => {
         }/>
 
       </Routes>
-    </>
+    </Page>
 
   )
 }

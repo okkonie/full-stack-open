@@ -8,9 +8,9 @@ test('blog calls createBlog onSumbit', async () => {
 
   render(<NewBlog createBlog={createBlog} />)
 
-  const titleInput = screen.getByPlaceholderText('title')
-  const authorInput = screen.getByPlaceholderText('author')
-  const urlInput = screen.getByPlaceholderText('url')
+  const titleInput = screen.getByLabelText('title')
+  const authorInput = screen.getByLabelText('author')
+  const urlInput = screen.getByLabelText('url')
 
   await user.type(titleInput, 'Testing title')
   await user.type(authorInput, 'Tester')

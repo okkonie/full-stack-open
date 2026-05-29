@@ -1,4 +1,35 @@
 import { useState } from 'react'
+import styled from 'styled-components'
+
+const Input = styled.input`
+  padding: 0.5rem;
+  box-sizing: border-box;
+  margin: 0.1rem;
+  font-size: 14px;
+  width: 250px;
+  outline: none;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-family: monospace;
+`
+
+const Header = styled.h2`
+  font-size: 24px;
+`
+
+const Button = styled.button`
+  font-family: monospace;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  width: 250px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #222;
+  color: white;
+  border: none;
+  margin: 0.1rem;
+  border-radius: 4px;
+`
 
 export default function NewBlog({ createBlog }){
   const [title, setTitle] = useState('')
@@ -16,41 +47,32 @@ export default function NewBlog({ createBlog }){
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>create new</h2>
+      <Header>create new</Header>
       <div>
-        <label>
-          title:
-          <input
-            type="text"
-            value={title}
-            placeholder='title'
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </label>
+        <Input
+          type="text"
+          value={title}
+          placeholder='title'
+          onChange={({ target }) => setTitle(target.value)}
+        />
       </div>
       <div>
-        <label>
-          author:
-          <input
-            type="text"
-            value={author}
-            placeholder='author'
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </label>
+        <Input
+          type="text"
+          value={author}
+          placeholder='author'
+          onChange={({ target }) => setAuthor(target.value)}
+        />
       </div>
       <div>
-        <label>
-          url:
-          <input
-            type="text"
-            value={url}
-            placeholder='url'
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </label>
+        <Input
+          type="text"
+          value={url}
+          placeholder='url'
+          onChange={({ target }) => setUrl(target.value)}
+        />
       </div>
-      <button type="submit">create</button>
+      <Button type="submit">create</Button>
     </form>
   )
 }

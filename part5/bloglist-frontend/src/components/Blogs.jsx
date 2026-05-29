@@ -6,8 +6,8 @@ export default function Blogs({ blogs }){
       <h2>blogs</h2>
       <ul>
         {blogs.map(blog =>
-          <li>
-            <Link to={`/blogs/${blog.id}`} key={blog.id}>{blog.title} by {blog.author}</Link>
+          <li key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
           </li>
         )}
       </ul>
