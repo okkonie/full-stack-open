@@ -1,14 +1,10 @@
 import useCounterStore from "../store"
 
 const Statistics = () => {
-  const counter = useCounterStore()
+  const { good, neutral, bad, all } = useCounterStore()
 
-  const good = counter.good
-  const neutral = counter.neutral
-  const bad = counter.bad
-  const all = counter.all
   const average = all === 0 ? 0 : ((good - bad) / all).toFixed(2)
-  const positive = all === 0 ? 0 : `${(good / all * 100).toFixed(2)} %`
+  const positive = all === 0 ? '0 %' : `${(good / all * 100).toFixed(2)} %`
   
   return (
     <div>
