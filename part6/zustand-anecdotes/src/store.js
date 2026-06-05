@@ -2,18 +2,19 @@
 import { create } from 'zustand'
 import anecdoteService from './services/anecdotes'
 
-const useNotificationStore = create((set) => ({
+const sortByVotes = (anecdotes) => (
+  anecdotes.sort((a, b) => b.votes - a.votes)
+)
+
+export const useNotificationStore = create((set) => ({
   notification: '',
   setNotification: text => {
     set(() => ({notification: text}))
-    setTimeout(
-      () => set(() => ({notification: ''})), 
-      5000
-    )
+    setTimeout(() => set(() => ({notification: ''})), 5000)
   }
 }))
 
-const useAnecdoteStore = create((set) => ({
+export const useAnecdoteStore = create((set) => ({
   anecdotes: [],
   filter: '',
   actions: {
@@ -23,21 +24,25 @@ const useAnecdoteStore = create((set) => ({
         { ...anecdote, votes: anecdote.votes + 1 }
       )
       set(state => ({
-        anecdotes: state.anecdotes.map(a => a.id === id ? updated : a)
+        anecdotes: sortByVotes(
+          state.anecdotes.map(a => a.id === id ? updated : a)
+        )
       }))
     },
     initialize: async () => {
       const anecdotes = await anecdoteService.getAll()
-      set(() => ({anecdotes: anecdotes}))
+      set(() => ({ anecdotes: sortByVotes(anecdotes) }))
     },
     add: async (anecdote) => {
       const res = await anecdoteService.create(anecdote)
-      set(state => ({anecdotes: [...state.anecdotes, res]}))
+      set(state => ({
+        anecdotes: sortByVotes([...state.anecdotes, res])
+      }))
     },
     remove: async (id) => {
       await anecdoteService.remove(id)
       set(state => ({
-        anecdotes: state.anecdotes.filter(a => a.id !== id)
+        anecdotes: sortByVotes(state.anecdotes.filter(a => a.id !== id))
       }))
     },
     setFilter: value => set(() => ({ filter: value }))
@@ -46,6 +51,6 @@ const useAnecdoteStore = create((set) => ({
 
 export const useNotification = () => useNotificationStore(state => state.notification)
 export const useSetNotification = () => useNotificationStore(state => state.setNotification)
-export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+export const useAnecdotes = () => useAnecdoteStore((state) => (state.anecdotes))
 export const useAnecdotesFilter = () => useAnecdoteStore((state) => state.filter)
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
