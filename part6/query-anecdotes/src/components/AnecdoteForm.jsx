@@ -1,4 +1,4 @@
-import { useAnecdotes } from '../../hooks/useAnecdotes'
+import { useAnecdotes } from './../hooks/useAnecdotes'
 
 const AnecdoteForm = () => {
   const { addAnecdote } = useAnecdotes()

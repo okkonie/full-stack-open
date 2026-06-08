@@ -18,7 +18,8 @@ export const createAnecdote = async (anecdote) => {
   })
 
   if (!res.ok) {
-    throw new Error('Failed to create note')
+    const error = await res.json()
+    throw new Error(error.error)
   }
 
   return await res.json()
