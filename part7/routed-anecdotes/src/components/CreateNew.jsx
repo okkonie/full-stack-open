@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import  { useField } from '../hooks'
+import  { useAnecdotes, useField } from '../hooks'
 
-const CreateNew = ({ addAnecdote }) => {
+const CreateNew = () => {
+  const { addAnecdote } = useAnecdotes()
+
   const { reset: resetContent, ...content } = useField('content')
   const { reset: resetAuthor, ...author } = useField('author')
   const { reset: resetInfo, ...info } = useField('info')
