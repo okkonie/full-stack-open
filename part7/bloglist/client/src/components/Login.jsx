@@ -1,6 +1,6 @@
-import { useState } from "react"
 import Notification from "./Notification"
 import styled from "styled-components"
+import { useField } from "../hooks/useField"
 
 const Input = styled.input`
   padding: 0.5rem;
@@ -33,14 +33,12 @@ const Button = styled.button`
 `
 
 export default function Login({ handleLogin }) {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const username = useField("text")
+  const password = useField("password")
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    handleLogin(username, password)
-    setUsername("")
-    setPassword("")
+    handleLogin({ username: username.value, password: password.value })
   }
 
   return (
@@ -48,20 +46,10 @@ export default function Login({ handleLogin }) {
       <Header>Login to application</Header>
       <form onSubmit={handleSubmit}>
         <div>
-          <Input
-            type="text"
-            value={username}
-            placeholder="username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <Input {...username} placeholder="username" />
         </div>
         <div>
-          <Input
-            type="password"
-            value={password}
-            placeholder="password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <Input {...password} placeholder="password" />
         </div>
         <Button type="submit">login</Button>
       </form>

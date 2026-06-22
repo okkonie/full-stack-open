@@ -1,8 +1,8 @@
 import styled from "styled-components"
+import { useNotificationMessage, useNotificationError } from "../store"
 
 const StyledNotification = styled.div`
-  background-color: ${({ $success }) =>
-    $success ? "#62f958" : "rgb(250, 87, 87)"};
+  background-color: ${({ $success }) => ($success ? "#62f958" : "#ff5656")};
   font-size: 16px;
   font-weight: bold;
   margin-top: 1em;
@@ -10,11 +10,12 @@ const StyledNotification = styled.div`
   padding: 1em;
 `
 
-const Notification = ({ notification }) => {
-  return notification ? (
-    <StyledNotification $success={notification.success}>
-      {notification.message}
-    </StyledNotification>
+const Notification = () => {
+  const message = useNotificationMessage()
+  const error = useNotificationError()
+
+  return message ? (
+    <StyledNotification $success={!error}>{message}</StyledNotification>
   ) : null
 }
 

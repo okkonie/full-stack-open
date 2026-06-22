@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,12 +10,17 @@ import Blogs from "./components/Blogs"
 import Blog from "./components/Blog"
 import NewBlog from "./components/NewBlog"
 import Login from "./components/Login"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
 import styled from "styled-components"
 import ErrorBoundary from "./components/ErrorBoundary"
+import {
+  useBlogs,
+  useBlogActions,
+  useSetNotification,
+  useUser,
+  useUserActions,
+} from "./store"
 
 const Page = styled.div`
   padding: 1em;
@@ -45,99 +50,74 @@ const NavLink = styled(Link)`
 `
 
 const AppContent = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
-
+  const user = useUser()
+  const userActions = useUserActions()
+  const blogs = useBlogs()
+  const blogActions = useBlogActions()
+  const setNotification = useSetNotification()
   const navigate = useNavigate()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    blogActions.initialize()
+  }, [blogActions])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("user")
+    userActions.initialize()
+  }, [userActions])
 
-    if (loggedUserJSON) {
-      const loggedUser = JSON.parse(loggedUserJSON)
-      blogService.setToken(loggedUser.token)
-      setUser(loggedUser)
-    }
-  }, [])
-
-  const handleMessage = (text, success) => {
-    setMessage({ message: text, success: success })
-    setTimeout(() => setMessage(null), 3000)
+  const handleNotification = (text, error) => {
+    setNotification(text, error)
   }
 
-  const handleLogin = async (username, password) => {
+  const handleLogin = async (credentials) => {
     try {
-      const user = await loginService.login({ username, password })
-      blogService.setToken(user.token)
-      setUser(user)
+      const loggedInUser = await userActions.login(credentials)
 
-      window.localStorage.setItem("user", JSON.stringify(user))
-
-      handleMessage(`logged in as ${user.name}`, true)
+      handleNotification(`logged in as ${loggedInUser.name}`, false)
       navigate("/")
     } catch {
-      handleMessage("wrong username or password", false)
+      handleNotification("wrong username or password", true)
     }
   }
 
   const handleLogout = async () => {
     try {
-      setUser(null)
-      window.localStorage.removeItem("user")
-
-      handleMessage("logged out", true)
+      userActions.logout()
+      handleNotification("logged out", false)
       navigate("/")
     } catch {
-      handleMessage("failed to logout", false)
+      handleNotification("failed to logout", true)
     }
   }
 
   const createBlog = async (blog) => {
     try {
-      const created = await blogService.create(blog)
-      setBlogs(blogs.concat(created))
-
-      handleMessage(
-        `a new blog ${created.title} by ${created.author} was added`,
-        true,
+      await blogActions.create(blog)
+      handleNotification(
+        `a new blog ${blog.title} by ${blog.author} was added`,
+        false,
       )
       navigate("/")
     } catch {
-      handleMessage("error creating blog", false)
+      handleNotification("error creating blog", true)
     }
   }
 
   const handleLike = async (blog) => {
     try {
-      const updated = await blogService.update({
-        ...blog,
-        likes: blog.likes + 1,
-        user: blog.user.id,
-      })
-
-      setBlogs(
-        blogs.map((old) =>
-          old.id === updated.id ? { ...updated, user: old.user } : old,
-        ),
-      )
+      await blogActions.like(blog.id)
     } catch {
-      handleMessage("error updating blog", false)
+      handleNotification("error updating blog", true)
     }
   }
 
   const handleDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`, true)) {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`, false)) {
       try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter((old) => old.id !== blog.id))
+        await blogActions.remove(blog.id)
         navigate("/")
       } catch {
-        handleMessage("error deleting blog", false)
+        handleNotification("error deleting blog", true)
       }
     }
   }
@@ -161,7 +141,7 @@ const AppContent = () => {
         </div>
       </Nav>
       <ErrorBoundary>
-        <Notification notification={message} />
+        <Notification />
         <Routes>
           <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
           <Route path="/create" element={<NewBlog createBlog={createBlog} />} />

@@ -1,5 +1,5 @@
-import { useState } from "react"
 import styled from "styled-components"
+import { useField } from "../hooks/useField"
 
 const Input = styled.input`
   padding: 0.5rem;
@@ -32,45 +32,30 @@ const Button = styled.button`
 `
 
 export default function NewBlog({ createBlog }) {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
+  const title = useField("text")
+  const author = useField("text")
+  const url = useField("text")
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    createBlog({ title, author, url })
-
-    setTitle("")
-    setAuthor("")
-    setUrl("")
+    createBlog({
+      title: title.value,
+      author: author.value,
+      url: url.value,
+    })
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <Header>create new</Header>
       <div>
-        <Input
-          type="text"
-          value={title}
-          placeholder="title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
+        <Input {...title} placeholder="title" />
       </div>
       <div>
-        <Input
-          type="text"
-          value={author}
-          placeholder="author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
+        <Input {...author} placeholder="author" />
       </div>
       <div>
-        <Input
-          type="text"
-          value={url}
-          placeholder="url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
+        <Input {...url} placeholder="url" />
       </div>
       <Button type="submit">create</Button>
     </form>
