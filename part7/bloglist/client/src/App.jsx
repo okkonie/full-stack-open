@@ -12,6 +12,8 @@ import NewBlog from "./components/NewBlog"
 import Login from "./components/Login"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
+import Users from "./components/Users"
+import User from "./components/User"
 import styled from "styled-components"
 import ErrorBoundary from "./components/ErrorBoundary"
 import {
@@ -20,6 +22,7 @@ import {
   useSetNotification,
   useUser,
   useUserActions,
+  useUsersStore,
 } from "./store"
 
 const Page = styled.div`
@@ -54,6 +57,7 @@ const AppContent = () => {
   const userActions = useUserActions()
   const blogs = useBlogs()
   const blogActions = useBlogActions()
+  const usersStore = useUsersStore()
   const setNotification = useSetNotification()
   const navigate = useNavigate()
 
@@ -65,41 +69,41 @@ const AppContent = () => {
     userActions.initialize()
   }, [userActions])
 
-  const handleNotification = (text, error) => {
-    setNotification(text, error)
-  }
+  useEffect(() => {
+    usersStore.initialize()
+  }, [usersStore])
 
   const handleLogin = async (credentials) => {
     try {
       const loggedInUser = await userActions.login(credentials)
 
-      handleNotification(`logged in as ${loggedInUser.name}`, false)
+      setNotification(`logged in as ${loggedInUser.name}`, false)
       navigate("/")
     } catch {
-      handleNotification("wrong username or password", true)
+      setNotification("wrong username or password", true)
     }
   }
 
   const handleLogout = async () => {
     try {
       userActions.logout()
-      handleNotification("logged out", false)
+      setNotification("logged out", false)
       navigate("/")
     } catch {
-      handleNotification("failed to logout", true)
+      setNotification("failed to logout", true)
     }
   }
 
   const createBlog = async (blog) => {
     try {
       await blogActions.create(blog)
-      handleNotification(
+      setNotification(
         `a new blog ${blog.title} by ${blog.author} was added`,
         false,
       )
       navigate("/")
     } catch {
-      handleNotification("error creating blog", true)
+      setNotification("error creating blog", true)
     }
   }
 
@@ -107,7 +111,7 @@ const AppContent = () => {
     try {
       await blogActions.like(blog.id)
     } catch {
-      handleNotification("error updating blog", true)
+      setNotification("error updating blog", true)
     }
   }
 
@@ -117,7 +121,7 @@ const AppContent = () => {
         await blogActions.remove(blog.id)
         navigate("/")
       } catch {
-        handleNotification("error deleting blog", true)
+        setNotification("error deleting blog", true)
       }
     }
   }
@@ -130,6 +134,7 @@ const AppContent = () => {
         <h1>Blog app</h1>
         <div>
           <NavLink to="/">blogs</NavLink>
+          <NavLink to="/users">users</NavLink>
           {user && <NavLink to="/create">new blog</NavLink>}
           {user ? (
             <NavLink to="/" onClick={handleLogout}>
@@ -144,6 +149,8 @@ const AppContent = () => {
         <Notification />
         <Routes>
           <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
           <Route path="/create" element={<NewBlog createBlog={createBlog} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route

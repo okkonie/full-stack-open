@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
+import usersService from "./services/users"
+
 import { getUser, saveUser, removeUser } from "./services/persistentUser"
 
 export const useNotificationStore = create((set) => ({
@@ -72,6 +74,15 @@ export const useUserStore = create((set) => ({
     },
   },
 }))
+
+export const useUsersStore = create((set) => ({
+  users: [],
+  initialize: async () => {
+    const users = await usersService.getAll()
+    set(() => ({ users: users }))
+  },
+}))
+
 export const useNotificationMessage = () =>
   useNotificationStore((state) => state.notification)
 
