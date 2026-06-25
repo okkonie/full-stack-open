@@ -116,8 +116,8 @@ export default function Blog({
       </form>
 
       <ul>
-        {blog.comments.map((c) => (
-          <li>{c}</li>
+        {blog.comments.map((c, i) => (
+          <li key={i}>{c}</li>
         ))}
       </ul>
     </StyledBlog>
