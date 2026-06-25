@@ -19,8 +19,8 @@ const Header = styled.h2`
 `
 
 const Button = styled.button`
-  box-sizing: border-box;
   font-family: monospace;
+  box-sizing: border-box;
   padding: 0.5rem;
   width: 250px;
   font-size: 16px;

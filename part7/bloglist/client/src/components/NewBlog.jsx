@@ -30,7 +30,6 @@ const Button = styled.button`
   margin: 0.1rem;
   border-radius: 4px;
 `
-
 export default function NewBlog({ createBlog }) {
   const title = useField("text")
   const author = useField("text")

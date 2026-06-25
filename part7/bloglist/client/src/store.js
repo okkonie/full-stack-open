@@ -45,6 +45,14 @@ export const useBlogStore = create((set) => ({
         ),
       }))
     },
+    comment: async (id, comment) => {
+      const updated = await blogService.comment(id, comment)
+      set((state) => ({
+        blogs: state.blogs.map((b) =>
+          b.id === id ? { ...updated, user: b.user } : b,
+        ),
+      }))
+    },
   },
 }))
 
@@ -77,9 +85,11 @@ export const useUserStore = create((set) => ({
 
 export const useUsersStore = create((set) => ({
   users: [],
-  initialize: async () => {
-    const users = await usersService.getAll()
-    set(() => ({ users: users }))
+  actions: {
+    initialize: async () => {
+      const users = await usersService.getAll()
+      set(() => ({ users: users }))
+    },
   },
 }))
 
@@ -96,3 +106,5 @@ export const useBlogs = () => useBlogStore((state) => state.blogs)
 export const useBlogActions = () => useBlogStore((state) => state.actions)
 export const useUser = () => useUserStore((state) => state.user)
 export const useUserActions = () => useUserStore((state) => state.actions)
+export const useUsers = () => useUsersStore((state) => state.users)
+export const useUsersActions = () => useUsersStore((state) => state.actions)

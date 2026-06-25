@@ -22,7 +22,7 @@ import {
   useSetNotification,
   useUser,
   useUserActions,
-  useUsersStore,
+  useUsersActions,
 } from "./store"
 
 const Page = styled.div`
@@ -57,7 +57,7 @@ const AppContent = () => {
   const userActions = useUserActions()
   const blogs = useBlogs()
   const blogActions = useBlogActions()
-  const usersStore = useUsersStore()
+  const usersActions = useUsersActions()
   const setNotification = useSetNotification()
   const navigate = useNavigate()
 
@@ -70,8 +70,8 @@ const AppContent = () => {
   }, [userActions])
 
   useEffect(() => {
-    usersStore.initialize()
-  }, [usersStore])
+    usersActions.initialize()
+  }, [usersActions])
 
   const handleLogin = async (credentials) => {
     try {
